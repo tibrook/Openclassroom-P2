@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" *ngIf="olympicData.length; else noData">
     <div class="dashboard-title">
         <h1>Medals per Country</h1>
     </div>
@@ -30,3 +30,7 @@
    
     
 </div>
+
+<ng-template #noData>
+    No Data. Try to reload page
+  </ng-template>

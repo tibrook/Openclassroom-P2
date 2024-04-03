@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap,map,switchMap  } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
+import { Observable,of } from 'rxjs'; 
 
 @Injectable({
   providedIn: 'root',
@@ -10,28 +11,41 @@ import { Olympic } from '../models/Olympic';
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
   private olympics$ = new BehaviorSubject<Olympic[] | null>(null);
+  private selectedCountryData = new BehaviorSubject<Olympic | null>(null);
 
   constructor(private http: HttpClient) {}
 
-  loadInitialData() {
+  loadInitialData(): Observable<Olympic[] | null> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
       tap((value) => this.olympics$.next(value)),
       catchError(this.handleError<Olympic[]>('loadInitialData'))
     );
   }
 
-  getOlympics() {
+  getOlympics(): Observable<Olympic[] | null> {
     return this.olympics$.asObservable();
   }
-  private handleError<T>(operation = 'operation') {
+  getCountryByName(countryName: string): Observable<Olympic | null>{
+    return this.getOlympics().pipe(
+      // switchMap wait until all data are loaded
+      switchMap(olympicsData => {
+        if (olympicsData === null) {
+          return this.loadInitialData().pipe(
+            switchMap(() => this.getOlympics()),
+            map(olympicsData => olympicsData?.find(c => c.country === countryName) || null)
+          );
+        } else {
+          return of(olympicsData.find(c => c.country === countryName) || null);
+        }
+      })
+    );
+  }
+  private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): BehaviorSubject<T | null> => {
       console.error(`${operation} failed: ${error.message}`, error);
       
       // Let the app keep running by returning a safe result
       this.olympics$.next(null);
-      
-      // Optionally, you could also trigger a side-effect, like displaying an error message
-      // this.showErrorMessage(`Could not load data: ${error.message}`);
       
       // Return an empty BehaviorSubject so the app can keep running
       return new BehaviorSubject<T | null>(null);
