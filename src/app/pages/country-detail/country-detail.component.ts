@@ -15,9 +15,9 @@ export class CountryDetailComponent {
   totalMedals = 0;
   yScaleMin: number = 0;
   yScaleMax: number = 0;
-
+  selectedColor: string = '956065'
   colorScheme: any = {
-    domain: ['#956065', '#793d52', '#89a1db', '#9780A1', '#BFE0F1', '#B8CBE7']
+    domain: []
   };
   totalAthletes = 0; 
   medalData: any[] = [];
@@ -30,6 +30,10 @@ export class CountryDetailComponent {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.countryName = params.get('countryName');
+      if(params.get('color')){
+        this.selectedColor = params.get('color')!
+      }
+      this.colorScheme.domain.push(this.selectedColor)
        if (this.countryName) {
           this.olympicService.getCountryByName(this.countryName).subscribe(data => {
           if (data) {

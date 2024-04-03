@@ -11,7 +11,6 @@ import { Observable,of } from 'rxjs';
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
   private olympics$ = new BehaviorSubject<Olympic[] | null>(null);
-  private selectedCountryData = new BehaviorSubject<Olympic | null>(null);
 
   constructor(private http: HttpClient) {}
 

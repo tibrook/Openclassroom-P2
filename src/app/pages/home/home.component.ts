@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   
   // public olympics$: Observable<any> = of(null);
   olympicData: Olympic[] = [];
-  
+  transformedData: Olympic[] = []
   // Need to create an interface to type ?? 
   colorScheme: any = {
     domain: ['#956065', '#793d52', '#89a1db', '#9780A1', '#BFE0F1', '#B8CBE7']
@@ -32,19 +32,20 @@ export class HomeComponent implements OnInit {
         console.log('Received data:', data);
         // Check if data is truthy (not null or undefined) and is an array before proceeding
         if (Array.isArray(data)) {
-          this.olympicData = this.transformDataForChart(data);
+          this.olympicData = data
+          this.transformedData = this.transformDataForChart(data);
           this.numberOfJOs = this.calculateNumberOfJOs(data);
           this.numberOfCountries = data.length;
         } else {
           // Handle the case where data is not as expected
-          this.olympicData = [];
+          this.transformedData = [];
           this.numberOfJOs = 0;
           this.numberOfCountries = 0;
         }
       },
       error: (err) => {
         console.error('Error fetching Olympic data:', err);
-        this.olympicData = [];
+        this.transformedData = [];
         this.numberOfJOs = 0;
         this.numberOfCountries = 0;
       }
@@ -76,6 +77,8 @@ export class HomeComponent implements OnInit {
   onSelect(event: any): void {
     const countryName = event.name;
     const countryIndex = this.olympicData.findIndex(olympic => olympic.country === countryName);
+    console.log('countryIndex : ' + this.olympicData)
+    console.log('countryIndex : ' + countryIndex)
     const countryColor = this.colorScheme.domain[countryIndex % this.colorScheme.domain.length];
     
     this.router.navigate(['/country-detail', countryName, { color: countryColor }]);
