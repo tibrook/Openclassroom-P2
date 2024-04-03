@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   colorScheme: any = {
     domain: ['#956065', '#793d52', '#89a1db', '#9780A1', '#BFE0F1', '#B8CBE7']
   };
+  isLoading: boolean = true; 
   numberOfJOs!: number; 
   numberOfCountries!: number; 
   gradient: boolean = false;
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit {
   constructor(private olympicService: OlympicService,private router: Router ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     // this.olympics$ = this.olympicService.getOlympics();
     this.olympicService.getOlympics().subscribe({
       next: (data) => {
@@ -36,6 +38,7 @@ export class HomeComponent implements OnInit {
           this.transformedData = this.transformDataForChart(data);
           this.numberOfJOs = this.calculateNumberOfJOs(data);
           this.numberOfCountries = data.length;
+          this.isLoading = false;
         } else {
           // Handle the case where data is not as expected
           this.transformedData = [];
@@ -48,6 +51,7 @@ export class HomeComponent implements OnInit {
         this.transformedData = [];
         this.numberOfJOs = 0;
         this.numberOfCountries = 0;
+        this.isLoading = false;
       }
     });
   }

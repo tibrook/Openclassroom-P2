@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { catchError, tap,map,switchMap  } from 'rxjs/operators';
+import { catchError, tap,map,switchMap, delay  } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 import { Observable,of } from 'rxjs'; 
 
@@ -16,6 +16,7 @@ export class OlympicService {
 
   loadInitialData(): Observable<Olympic[] | null> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
+      delay(2000), // test loading spinner
       tap((value) => this.olympics$.next(value)),
       catchError(this.handleError<Olympic[]>('loadInitialData'))
     );

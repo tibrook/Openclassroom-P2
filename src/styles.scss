@@ -74,12 +74,12 @@
     background-color: var(--primary-color);
     font-size: var(--chart-label-font-size);
   }
+
  
   @media (max-width: 1024px) {
     .container {
       max-width: 60%;
-      align-items: center;
-
+      
     }
   }
   
