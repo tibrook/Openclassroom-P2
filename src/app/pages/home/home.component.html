@@ -18,6 +18,7 @@
       [results]="transformedData"
       [gradient]="false"
       [labels]="true"
+      [trimLabels] = "false"
       [doughnut]="false"
       (select)="onSelect($event)">
     <ng-template #tooltipTemplate let-model="model">

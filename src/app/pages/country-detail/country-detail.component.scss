@@ -4,6 +4,7 @@
     border: var(--primary-color) 2px solid;
     border-radius: var(--border-radius);
     padding: 8px;
+    font-size: 1.5rem;
     cursor: pointer;
     &:hover{
         background-color: var(--primary-color);
@@ -11,7 +12,13 @@
     }
 } 
 .ng-star-inserted{
-    margin-top: 40px!important;
+    transform: translate(300px)!important;
     font-size: 2rem;
-    color: lightgrey
+    color: lightgrey!important;
+}
+::ng-deep .tick text { 
+    font-size: 1.2rem!important;
+}
+.chart-legend{
+    color: blue!important
 }

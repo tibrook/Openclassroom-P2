@@ -67,7 +67,7 @@ export class CountryDetailComponent {
       name: this.countryName,
       series: participations.map(participation => ({
         name: participation.year.toString(),
-        value: participation.medalsCount
+        value: Math.round(participation.medalsCount)
       }))
     }];
   }
