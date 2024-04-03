@@ -8,7 +8,7 @@
     --content-font-size: 0.875rem;
     --chart-label-font-size: 1.25rem;
     --font-family: 'Roboto', sans-serif;
-    --border-radius: 1rem;
+    --border-radius: 0.75rem;
   }
   
   .container {
@@ -20,7 +20,7 @@
   
     .dashboard-title {
       background-color: var(--primary-color);
-      max-width: 80%;
+      width: auto;
       margin: auto;
       border-radius: var(--border-radius);
       color: white;

@@ -77,8 +77,6 @@ export class HomeComponent implements OnInit {
   onSelect(event: any): void {
     const countryName = event.name;
     const countryIndex = this.olympicData.findIndex(olympic => olympic.country === countryName);
-    console.log('countryIndex : ' + this.olympicData)
-    console.log('countryIndex : ' + countryIndex)
     const countryColor = this.colorScheme.domain[countryIndex % this.colorScheme.domain.length];
     
     this.router.navigate(['/country-detail', countryName, { color: countryColor }]);

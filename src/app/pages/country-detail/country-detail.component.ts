@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OlympicService } from '../../core/services/olympic.service';
 import { Observable } from 'rxjs';
 import { Olympic  } from '../../core/models/Olympic';
@@ -24,7 +24,8 @@ export class CountryDetailComponent {
   countryData: Olympic | null = null;
   constructor(
     private route: ActivatedRoute,
-    private olympicService: OlympicService
+    private olympicService: OlympicService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -69,5 +70,8 @@ export class CountryDetailComponent {
         value: participation.medalsCount
       }))
     }];
+  }
+  navigateBack(): void {
+    this.router.navigate(['/']); 
   }
 }
