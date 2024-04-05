@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OlympicService } from '../../core/services/olympic.service';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { Olympic  } from '../../core/models/Olympic';
 import { Participation  } from '../../core/models/Participation';
+
 @Component({
   selector: 'app-country-detail',
   templateUrl: './country-detail.component.html',
@@ -11,16 +12,17 @@ import { Participation  } from '../../core/models/Participation';
 })
 export class CountryDetailComponent {
   countryName: string | null = null; 
-  numberOfEntries = 0; 
-  totalMedals = 0;
+  numberOfEntries: number = 0; 
+  totalMedals: number = 0;
+  isLoading: boolean = true;
   yScaleMin: number = 0;
   yScaleMax: number = 0;
-  selectedColor: string = '956065'
+  selectedColor: string = '#956065'
   colorScheme: any = {
     domain: []
   };
   totalAthletes = 0; 
-  medalData: any[] = [];
+  medalData: any[] | null = null;
   countryData: Olympic | null = null;
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +31,7 @@ export class CountryDetailComponent {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true
     this.route.paramMap.subscribe(params => {
       this.countryName = params.get('countryName');
       if(params.get('color')){
@@ -36,14 +39,18 @@ export class CountryDetailComponent {
       }
       this.colorScheme.domain.push(this.selectedColor)
        if (this.countryName) {
-          this.olympicService.getCountryByName(this.countryName).subscribe(data => {
+          this.olympicService.getCountryByName(this.countryName).pipe(take(2)).subscribe(data => {
           if (data) {
             this.countryData = data;
             this.loadCountryData(this.countryData.participations, this.countryName!)
             this.prepareChartData(data.participations);
+          }else{
+            this.countryData = null
           }
+          this.isLoading = false
         });
       }else{
+        this.isLoading = false
         // Redirect back / Show alert or error message ? 
       }
     });

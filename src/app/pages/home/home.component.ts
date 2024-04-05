@@ -31,19 +31,20 @@ export class HomeComponent implements OnInit {
     // this.olympics$ = this.olympicService.getOlympics();
     this.olympicService.getOlympics().subscribe({
       next: (data) => {
-        console.log('Received data:', data);
-        // Check if data is truthy (not null or undefined) and is an array before proceeding
-        if (Array.isArray(data)) {
-          this.olympicData = data
-          this.transformedData = this.transformDataForChart(data);
-          this.numberOfJOs = this.calculateNumberOfJOs(data);
-          this.numberOfCountries = data.length;
+        console.log(data)
+        if(data){
+          console.log('Received data:', data);
+          // Check if data is truthy (not null or undefined) and is an array before proceeding
+          if (Array.isArray(data)) {
+            this.olympicData = data
+            this.transformedData = this.transformDataForChart(data);
+            this.numberOfJOs = this.calculateNumberOfJOs(data);
+            this.numberOfCountries = data.length;
+          } else {
+            // Handle the case where data is not as expected
+            this.olympicData = [];
+          }
           this.isLoading = false;
-        } else {
-          // Handle the case where data is not as expected
-          this.transformedData = [];
-          this.numberOfJOs = 0;
-          this.numberOfCountries = 0;
         }
       },
       error: (err) => {

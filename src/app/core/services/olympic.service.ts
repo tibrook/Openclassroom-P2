@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { catchError, tap,map,switchMap, delay  } from 'rxjs/operators';
+import { catchError, tap,map,switchMap, delay,filter  } from 'rxjs/operators';
 import { Olympic } from '../models/Olympic';
 import { Observable,of } from 'rxjs'; 
 
@@ -25,19 +25,10 @@ export class OlympicService {
   getOlympics(): Observable<Olympic[] | null> {
     return this.olympics$.asObservable();
   }
-  getCountryByName(countryName: string): Observable<Olympic | null>{
-    return this.getOlympics().pipe(
-      // switchMap wait until all data are loaded
-      switchMap(olympicsData => {
-        if (olympicsData === null) {
-          return this.loadInitialData().pipe(
-            switchMap(() => this.getOlympics()),
-            map(olympicsData => olympicsData?.find(c => c.country === countryName) || null)
-          );
-        } else {
-          return of(olympicsData.find(c => c.country === countryName) || null);
-        }
-      })
+  getCountryByName(countryName: string): Observable<Olympic | null> {
+    return this.olympics$.pipe(
+      filter(olympicsData => olympicsData !== null), 
+      map(olympicsData => olympicsData!.find(c => c.country === countryName) || null)
     );
   }
   private handleError<T>(operation = 'operation', result?: T) {
