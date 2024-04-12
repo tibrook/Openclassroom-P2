@@ -1,9 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Olympic } from '../../core/models/Olympic';
 import { Router } from '@angular/router';
+import { Color, ScaleType } from '@swimlane/ngx-charts';
+import { takeUntil } from 'rxjs/operators';
 
+
+interface ChartSelectEvent {
+  name: string; 
+  value: number;
+}
+
+interface ChartData {
+  name: string;
+  value: number;
+}
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -12,15 +24,19 @@ import { Router } from '@angular/router';
 
 export class HomeComponent implements OnInit {
   
+  private destroy$ = new Subject<void>();
   // public olympics$: Observable<any> = of(null);
   olympicData: Olympic[] = [];
-  transformedData: Olympic[] = []
-  // Need to create an interface to type ?? 
-  colorScheme: any = {
-    domain: ['#956065', '#793d52', '#89a1db', '#9780A1', '#BFE0F1', '#B8CBE7']
+  transformedData: ChartData[] = []
+  colorScheme: Color= {
+    domain: ['#956065', '#793d52', '#89a1db', '#9780A1', '#BFE0F1', '#B8CBE7'],
+    group: ScaleType.Ordinal, 
+    selectable: true, 
+    name: 'Customer Usage',
   };
   isLoading: boolean = true; 
   numberOfJOs!: number; 
+  view!: [number, number];
   numberOfCountries!: number; 
   gradient: boolean = false;
 
@@ -29,13 +45,13 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     // this.olympics$ = this.olympicService.getOlympics();
-    this.olympicService.getOlympics().subscribe({
+    this.olympicService.getOlympics().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         console.log(data)
         if(data){
           console.log('Received data:', data);
           // Check if data is truthy (not null or undefined) and is an array before proceeding
-          if (Array.isArray(data)) {
+          if(Array.isArray(data) && data.every(d => d.hasOwnProperty('country') && Array.isArray(d.participations))) {
             this.olympicData = data
             this.transformedData = this.transformDataForChart(data);
             this.numberOfJOs = this.calculateNumberOfJOs(data);
@@ -56,7 +72,11 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-  transformDataForChart(data: Olympic[]): any[] {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  transformDataForChart(data: Olympic[]): ChartData[] {
     if (!data) {
       return [];
     }
@@ -79,11 +99,14 @@ export class HomeComponent implements OnInit {
     });
     return years.size;
   }
-  onSelect(event: any): void {
+  onSelect(event: ChartSelectEvent): void {
     const countryName = event.name;
     const countryIndex = this.olympicData.findIndex(olympic => olympic.country === countryName);
     const countryColor = this.colorScheme.domain[countryIndex % this.colorScheme.domain.length];
-    
     this.router.navigate(['/country-detail', countryName, { color: countryColor }]);
+  }
+  onResize(event:any) {
+    this.view = [event.target.innerWidth / 1.35, 400];
+    console.log(this.view)
   }
 }

@@ -14,7 +14,7 @@
   .container {
     padding: 2.5rem;
     font-family: var(--font-family);
-    max-width: 40%; 
+    max-width: 60%; 
     margin: auto;
     text-align: center;
   
@@ -97,9 +97,9 @@
       flex-direction: column;
       align-items: center;
   
-      .stat-item {
-        width: 100%; 
-      }
+      // .stat-item {
+      //   width: 100%; 
+      // }
     }
   }
   

@@ -1,7 +1,7 @@
 <app-spinner *ngIf="isLoading"></app-spinner>
 
 <div *ngIf="!isLoading">
-    <div *ngIf="olympicData.length; else noData" class="container" >
+    <div *ngIf="olympicData.length; else noData" #containerRef class="container" >
         <div class="dashboard-title">
             <h1>Medals per Country</h1>
         </div>
@@ -15,24 +15,25 @@
                 <b>{{numberOfCountries}}</b>
             </div>
         </div>
+        <div class="container-chart">
         <ngx-charts-pie-chart
-          [view]="[700, 400]"
-          [scheme]="colorScheme"
-          [results]="transformedData"
-          [gradient]="false"
-          [labels]="true"
-          [trimLabels] = "false"
-          [doughnut]="false"
-          (select)="onSelect($event)">
-        <ng-template #tooltipTemplate let-model="model">
-            <div class="custom-tooltip">
-                <span>{{model.name}} </span><br/>
-                <i class="fa fa-medal tooltip-icon"></i><span>{{model.value}}</span>
-            </div>
-        </ng-template>
+            [view]="view"
+            (window:resize)="onResize($event)"
+            [scheme]="colorScheme"
+            [results]="transformedData"
+            [gradient]="false"
+            [labels]="true"
+            [trimLabels] = "true"
+            [doughnut]="false"
+            (select)="onSelect($event)">
+            <ng-template #tooltipTemplate let-model="model">
+                <div class="custom-tooltip">
+                    <span>{{model.name}} </span><br/>
+                    <i class="fa fa-medal tooltip-icon"></i><span>{{model.value}}</span>
+                </div>
+            </ng-template>
         </ngx-charts-pie-chart>
-       
-        
+        </div>
     </div>
     
     <ng-template #noData>

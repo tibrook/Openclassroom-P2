@@ -18,19 +18,24 @@
                 <b>{{totalAthletes}}</b>
             </div>
         </div>
-        <ngx-charts-line-chart
-            [view]="[700, 300]"
+        <div class="container-chart">
+            <ngx-charts-line-chart
+            [view]="view"
+            (window:resize)="onResize($event)"
             [scheme]="colorScheme"
             [results]="medalData"
             [xAxis]="true"
             [yScaleMin]="yScaleMin"
+            [yAxisTickFormatting]="getMathPower"
             [yScaleMax]="yScaleMax"
             [yAxis]="true"
             [showXAxisLabel]="true"
             [showYAxisLabel]="true"
             xAxisLabel="Dates"
             >
-        </ngx-charts-line-chart>
+            </ngx-charts-line-chart>
+        </div>
+      
         <button class="btnReturn" (click)="navigateBack()">Return</button>
     
     </div>
