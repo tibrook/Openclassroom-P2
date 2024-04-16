@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OlympicService } from '../../core/services/olympic.service';
-import { Observable, take } from 'rxjs';
+import { Observable, takeUntil,Subject } from 'rxjs';
 import { Olympic  } from '../../core/models/Olympic';
 import { Participation  } from '../../core/models/Participation';
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 
-const DEFAULT_COLOR = '#956065';
+const DEFAULT_COLOR: string = '#956065';
 
 interface SeriesItem {
   name: string;
@@ -22,7 +22,7 @@ interface MedalDataItem {
   styleUrl: './country-detail.component.scss'
 })
 
-export class CountryDetailComponent {
+export class CountryDetailComponent implements OnInit, OnDestroy {
   countryName!: string | null; 
   numberOfEntries: number = 0; 
   totalMedals: number = 0;
@@ -30,6 +30,7 @@ export class CountryDetailComponent {
   yScaleMin: number = 0;
   yScaleMax: number = 0;
   view!: [number, number];
+  private destroy$ = new Subject<void>();
   selectedColor: string = DEFAULT_COLOR
   colorScheme: Color= {
     domain: [],
@@ -47,6 +48,9 @@ export class CountryDetailComponent {
   ) {}
 
   ngOnInit(): void {
+    this.olympicService.getLoadingState().pipe(takeUntil(this.destroy$)).subscribe((loading) => {
+      this.isLoading = loading;
+    });
     this.route.paramMap.subscribe(params => {
       this.countryName = params.get('countryName');
       if(params.get('color')){
@@ -54,27 +58,27 @@ export class CountryDetailComponent {
       }
       this.colorScheme.domain.push(this.selectedColor)
        if (this.countryName) {
-          this.olympicService.getCountryByName(this.countryName).pipe(take(1)).subscribe(data => {
-            console.log(data)
+          this.olympicService.getCountryByName(this.countryName).pipe(takeUntil(this.destroy$)).subscribe(data => {
           if (data) {
             this.countryData = data;
             this.loadCountryData(this.countryData.participations, this.countryName!)
             this.prepareChartData(data.participations);
           }else{
             // No data means countryName not found 
-            this.router.navigate(['/not-found']);
+            // this.router.navigate(['/not-found']);
             this.countryData = null
           }
-          this.isLoading = false
         });
       }else{
-        this.isLoading = false
         this.router.navigate(['/']);
         // Redirect back / Show alert or error message ? 
       }
     });
   }
-  
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   loadCountryData(participations: Participation[], countryName: string): void {
     this.numberOfEntries = participations.length;
     this.totalMedals = participations.reduce((acc, participation) => acc + participation.medalsCount, 0);

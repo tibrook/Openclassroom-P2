@@ -1,6 +1,6 @@
 <app-spinner *ngIf="isLoading"></app-spinner>
 <div *ngIf="!isLoading">
-    <div *ngIf="medalData; else noData" class="container">
+    <div *ngIf="medalData.length; else noData" class="container">
         <div class="dashboard-title">
             <h1>{{countryName}}</h1>
         </div>
@@ -35,9 +35,7 @@
             >
             </ngx-charts-line-chart>
         </div>
-      
         <button class="btnReturn" (click)="navigateBack()">Return</button>
-    
     </div>
     <ng-template #noData >
         No Data. Reload page or try again later

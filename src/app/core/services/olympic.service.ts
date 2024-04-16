@@ -11,34 +11,43 @@ import { Observable,of, throwError } from 'rxjs';
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
   // BehaviorSubject store the last data sended
-  private olympics$ = new BehaviorSubject<Olympic[] | null>(null);
+  private olympics$:BehaviorSubject<Olympic[]> = new BehaviorSubject<Olympic[]>([]);
+  private isLoading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {}
 
-  loadInitialData(): Observable<Olympic[] | null> {
+  loadInitialData(): Observable<Olympic[]> {
+    this.isLoading$.next(true);
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
+      delay(2000),
       timeout(5000),
-      delay(2000), // test loading spinner
-      filter((value)=> value !== null),
-      tap((value) => this.olympics$.next(value)),
+      tap((value) => {
+        this.olympics$.next(value);
+        this.isLoading$.next(false);
+      }),
       catchError((error: HttpErrorResponse | Error) => {
+        this.isLoading$.next(false);
         if (error instanceof HttpErrorResponse) {
           console.error(`Erreur HTTP ${error.status}: ${error.statusText}`);
         } else {
           console.error(`Erreur de chargement des données: ${error.message}`);
         }
-        return of(null); 
-      })    
+        this.olympics$.next([])
+        return of([]); 
+      })
     );
+  }
+  getLoadingState(): Observable<boolean> {
+    return this.isLoading$.asObservable();
   }
 
-  getOlympics(): Observable<Olympic[] | null> {
+  getOlympics(): Observable<Olympic[]> {
     return this.olympics$.asObservable();
   }
-  getCountryByName(countryName: string): Observable<Olympic | null> {
-    return this.olympics$.pipe(
-      filter(olympicsData => olympicsData !== null), 
-      map(olympicsData => olympicsData!.find(c => c.country === countryName) || null)
-    );
+  getCountryByName(countryName: string): Observable<Olympic> {
+    return this.getOlympics().pipe(
+      map((olympicsData) => olympicsData.filter(c => c.country === countryName)[0])
+    ) as Observable<Olympic>
+  
   }
 }

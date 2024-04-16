@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
+import { Component, OnInit, OnDestroy  } from '@angular/core';
+import { Observable, of, Subject, } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Olympic } from '../../core/models/Olympic';
 import { Router } from '@angular/router';
 import { Color, ScaleType } from '@swimlane/ngx-charts';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil,filter } from 'rxjs/operators';
 
 
 interface ChartSelectEvent {
@@ -22,7 +22,7 @@ interface ChartData {
   styleUrls: ['./home.component.scss'],
 })
 
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   
   private destroy$ = new Subject<void>();
   // public olympics$: Observable<any> = of(null);
@@ -45,41 +45,21 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     // this.olympics$ = this.olympicService.getOlympics();
-    this.olympicService.getOlympics().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => {
-        console.log(data)
-        if(data){
-          console.log('Received data:', data);
-          // Check if data is truthy (not null or undefined) and is an array before proceeding
-          if(Array.isArray(data) && data.every(d => d.hasOwnProperty('country') && Array.isArray(d.participations))) {
-            this.olympicData = data
-            this.transformedData = this.transformDataForChart(data);
-            this.numberOfJOs = this.calculateNumberOfJOs(data);
-            this.numberOfCountries = data.length;
-          } else {
-            // Handle the case where data is not as expected
-            this.olympicData = [];
-          }
-          this.isLoading = false;
+    this.olympicService.getLoadingState().pipe(takeUntil(this.destroy$)).subscribe((loading) => {
+      this.isLoading = loading;
+    });
+    this.olympicService.getOlympics()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((data) => {
+        if(data && Array.isArray(data) && data.every(d => d.hasOwnProperty('country') && Array.isArray(d.participations))) {
+          this.olympicData = data
+          this.transformedData = this.transformDataForChart(data);
+          this.numberOfJOs = this.calculateNumberOfJOs(data);
+          this.numberOfCountries = data.length;
         }
-      },
-      error: (err) => {
-        console.error('Error fetching Olympic data:', err);
-        this.transformedData = [];
-        this.numberOfJOs = 0;
-        this.numberOfCountries = 0;
-        this.isLoading = false;
-      }
     });
   }
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
   transformDataForChart(data: Olympic[]): ChartData[] {
-    if (!data) {
-      return [];
-    }
     return data.map(olympic => {
       return {
         name: olympic.country,
@@ -88,9 +68,6 @@ export class HomeComponent implements OnInit {
     });
   }
   calculateNumberOfJOs(data: Olympic[]): number {
-    if (!data) {
-      return 0;
-    }
     const years = new Set(); 
     data.forEach(olympic => {
       olympic.participations.forEach(participation => {
@@ -100,13 +77,16 @@ export class HomeComponent implements OnInit {
     return years.size;
   }
   onSelect(event: ChartSelectEvent): void {
-    const countryName = event.name;
-    const countryIndex = this.olympicData.findIndex(olympic => olympic.country === countryName);
-    const countryColor = this.colorScheme.domain[countryIndex % this.colorScheme.domain.length];
+    const countryName:string = event.name;
+    const countryIndex:number = this.olympicData.findIndex(olympic => olympic.country === countryName);
+    const countryColor:string = this.colorScheme.domain[countryIndex % this.colorScheme.domain.length];
     this.router.navigate(['/country-detail', countryName, { color: countryColor }]);
   }
-  onResize(event:any) {
+  onResize(event:any): void {
     this.view = [event.target.innerWidth / 1.35, 400];
-    console.log(this.view)
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
