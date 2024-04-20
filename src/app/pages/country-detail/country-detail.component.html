@@ -1,0 +1,43 @@
+<app-spinner *ngIf="isLoading"></app-spinner>
+<div *ngIf="!isLoading">
+    <div *ngIf="medalData.length; else noData" class="container">
+        <div class="dashboard-title">
+            <h1>{{countryName}}</h1>
+        </div>
+        <div class="statistics">
+            <div class="stat-item">
+                <h3>Number of Entries</h3>
+                <b>{{numberOfEntries}}</b>
+            </div>
+            <div class="stat-item">
+                <h3>Number of medals</h3>
+                <b>{{totalMedals}}</b>
+            </div>
+            <div class="stat-item">
+                <h3>Total Number of Athletes</h3>
+                <b>{{totalAthletes}}</b>
+            </div>
+        </div>
+        <div class="container-chart">
+            <ngx-charts-line-chart
+            (window:resize)="onResize($event)"
+            [scheme]="colorScheme"
+            [results]="medalData"
+            [xAxis]="true"
+            [yScaleMin]="yScaleMin"
+            [yAxisTickFormatting]="getMathPower"
+            [yScaleMax]="yScaleMax"
+            [yAxis]="true"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            xAxisLabel="Dates"
+            >
+            </ngx-charts-line-chart>
+        </div>
+        <button class="btnReturn" (click)="navigateBack()">Return</button>
+    </div>
+    <ng-template #noData >
+        No Data. Reload page or try again later
+    </ng-template>
+</div>
+

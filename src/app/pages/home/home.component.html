@@ -1,3 +1,41 @@
-<h2>Olympic games app</h2>
-<hr />
-<p>{{ (olympics$ | async)?.length }} data loaded</p>
+<app-spinner *ngIf="isLoading"></app-spinner>
+
+<div *ngIf="!isLoading">
+    <div *ngIf="olympicData.length; else noData" #containerRef class="container" >
+        <div class="dashboard-title">
+            <h1>Medals per Country</h1>
+        </div>
+        <div class="statistics">
+            <div class="stat-item">
+                <h3>Number of JOs</h3>
+                <b>{{numberOfJOs}}</b>
+            </div>
+            <div class="stat-item">
+                <h3>Number of countries</h3>
+                <b>{{numberOfCountries}}</b>
+            </div>
+        </div>
+        <div class="container-chart">
+        <ngx-charts-pie-chart
+            (window:resize)="onResize($event)"
+            [scheme]="colorScheme"
+            [results]="transformedData"
+            [gradient]="false"
+            [labels]="true"
+            [trimLabels] = "true"
+            [doughnut]="false"
+            (select)="onSelect($event)">
+            <ng-template #tooltipTemplate let-model="model">
+                <div class="custom-tooltip">
+                    <span>{{model.name}} </span><br/>
+                    <i class="fa fa-medal tooltip-icon"></i><span>{{model.value}}</span>
+                </div>
+            </ng-template>
+        </ngx-charts-pie-chart>
+        </div>
+    </div>
+    
+    <ng-template #noData>
+        No Data. Reload page or try again later
+    </ng-template>
+</div>
