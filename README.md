@@ -18,27 +18,27 @@ Cette application utilise Angular pour le front-end. Les principales pratiques t
 Pour installer et lancer l'application sur votre machine locale, suivez ces étapes :
 
 1. Clonez le dépôt GitHub :
-    ```bash
+    ```
     git clone https://github.com/tibrook/Openclassroom-P2
     ```
 2. Installez les dépendances :
-    ```bash
+    ```
     cd Developpez-le-front-end-en-utilisant-Angular
     npm install
     ```
 3. Lancez le serveur de développement :
-    ```bash
+    ```
     ng serve
     ```
 4. Ouvrez votre navigateur à l'adresse `http://localhost:4200/`.
 
 ## Prérequis
 Vous devez avoir Node.js et Angular CLI v17 installés sur votre machine. Pour vérifier si vous avez Angular CLI installé, exécutez cette commande :
-    ```bash
+    ```
 ng version
     ```
 Si Angular CLI n'est pas installé, vous pouvez l'installer globalement en utilisant npm :
-    ```bash
+    ```
 npm install -g @angular/cli
     ```
 
