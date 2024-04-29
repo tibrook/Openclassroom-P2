@@ -16,12 +16,14 @@ export class OlympicService {
   constructor(private http: HttpClient) {}
 
   /**
-   * 
+   * Fetches initial data from a JSON file and updates the observables for olympics data and loading state.
+   * Applies a delay and timeout for the request to simulate network conditions or enforce timeout.
+   * @returns {Observable<Olympic[]>} An observable of the Olympic data array.
    */
   loadInitialData(): Observable<Olympic[]> {
     this.isLoading$.next(true);
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      delay(2000),
+      delay(2000),  // Delay to simulate network latency.
       timeout(5000),
       map((data) => this.removeDuplicates(data)),
       tap((value) => {
@@ -40,20 +42,38 @@ export class OlympicService {
       })
     );
   }
+  /**
+   * Returns an observable of the current loading state.
+   * @returns {Observable<boolean>} An observable of the boolean loading state.
+   */
   getLoadingState(): Observable<boolean> {
     return this.isLoading$.asObservable();
   }
 
+  /**
+   * Provides an observable of the current Olympic data.
+   * @returns {Observable<Olympic[]>} An observable of the Olympic data array.
+   */
   getOlympics(): Observable<Olympic[]> {
     return this.olympics$.asObservable();
   }
  
+  /**
+   * Retrieves a specific country's Olympic data by name.
+   * @param {string} countryName - The name of the country to search for.
+   * @returns {Observable<Olympic>} An observable of the Olympic data for the specified country.
+   */
   getCountryByName(countryName: string): Observable<Olympic> {
     return this.getOlympics().pipe(
       map((olympicsData) => olympicsData.filter(c => c.country === countryName)[0])
     ) as Observable<Olympic>
   }
 
+  /**
+   * Removes duplicate countries from the Olympic data.
+   * @param {Olympic[]} data - The array of Olympic data to filter.
+   * @returns {Olympic[]} The filtered array with unique countries.
+   */
   private removeDuplicates(data: Olympic[]): Olympic[] {
     const uniqueCountries = new Set();
     const filteredData = data.filter(olympic => {
@@ -67,6 +87,11 @@ export class OlympicService {
     return filteredData;
   }
 
+  /**
+   * Filters out duplicate participations based on the year.
+   * @param {Participation[]} participations - The array of participations to filter.
+   * @returns {Participation[]} The filtered array with unique years of participation.
+   */
   private uniqueParticipations(participations: Participation[]): Participation[] {
     const uniqueYears = new Set();
     return participations.filter(participation => {

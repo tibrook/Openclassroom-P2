@@ -56,10 +56,10 @@ export class CountryDetailComponent implements OnInit, OnDestroy {
     ).subscribe(([params, isLoading]) => {
       this.isLoading = isLoading;
       this.countryName = params.get('countryName');
-      if (params.get('color')) {
+      if (params.get('color') && params.get('color')!.length === 5) {
         this.selectedColor = params.get('color')!;
-        this.colorScheme.domain.push(this.selectedColor);
       }
+      this.colorScheme.domain.push(this.selectedColor);
 
       if (this.countryName && !isLoading) {
         this._olympicService.getCountryByName(this.countryName).subscribe(data => {

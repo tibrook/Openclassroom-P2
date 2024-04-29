@@ -1,29 +1,49 @@
-# OlympicGamesStarter
+# OlympicGames
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+## Présentation
+Le TéléSport Olympic Dashboard est une application web interactive développée pour TéléSport à l'occasion des Jeux Olympiques. Cette application permet aux utilisateurs de visualiser des données historiques sur les Jeux Olympiques, telles que le nombre de médailles par pays.
 
-Don't forget to install your node_modules before starting (`npm install`).
+## Fonctionnalités
+- **Dashboard Principal :** Affiche un graphique des médailles par pays. L'utilisateur peut cliquer sur un pays pour accéder à des détails spécifiques.
+- **Page Country-details :** Présente des informations détaillées sur le pays sélectionné, y compris le nombre total de médailles obtenues et le nombre d'athlètes présentés aux Jeux Olympiques, accompagnés d'un graphique représentant les performances par édition.
 
-## Development server
+## Technologie
+Cette application utilise Angular pour le front-end. Les principales pratiques techniques incluent :
+- Utilisation de services Angular pour les appels HTTP.
+- Gestion des données asynchrones avec RxJS et les observables.
+- Bonnes pratiques de souscription et désinscription aux observables.
+- Typage fort pour éviter l'utilisation du type `any` dans le code.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Installation
+Pour installer et lancer l'application sur votre machine locale, suivez ces étapes :
 
-## Build
+1. Clonez le dépôt GitHub :
+    ```bash
+    git clone https://github.com/tibrook/Openclassroom-P2
+    ```
+2. Installez les dépendances :
+    ```bash
+    cd Developpez-le-front-end-en-utilisant-Angular
+    npm install
+    ```
+3. Lancez le serveur de développement :
+    ```bash
+    ng serve
+    ```
+4. Ouvrez votre navigateur à l'adresse `http://localhost:4200/`.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Prérequis
+Vous devez avoir Node.js et Angular CLI v17 installés sur votre machine. Pour vérifier si vous avez Angular CLI installé, exécutez cette commande :
+    ```bash
+ng version
+    ```
+Si Angular CLI n'est pas installé, vous pouvez l'installer globalement en utilisant npm :
+    ```bash
+npm install -g @angular/cli
+    ```
 
-## Where to start
+## Contribuer
+Pour contribuer au projet, veuillez suivre les pratiques standard de développement Angular et soumettre vos pull requests pour révision.
 
-As you can see, an architecture has already been defined for the project. It is just a suggestion, you can choose to use your own. The predefined architecture includes (in addition to the default angular architecture) the following:
-
-- `components` folder: contains every reusable components
-- `pages` folder: contains components used for routing
-- `core` folder: contains the business logic (`services` and `models` folders)
-
-I suggest you to start by understanding this starter code. Pay an extra attention to the `app-routing.module.ts` and the `olympic.service.ts`.
-
-Once mastered, you should continue by creating the typescript interfaces inside the `models` folder. As you can see I already created two files corresponding to the data included inside the `olympic.json`. With your interfaces, improve the code by replacing every `any` by the corresponding interface.
-
-You're now ready to implement the requested features.
-
-Good luck!
+## Contact
+Pour plus d'informations ou pour tout problème, veuillez contacter Guillouet Alexandre ou envoyer un email à alexandre.guillouet@gmail.com
