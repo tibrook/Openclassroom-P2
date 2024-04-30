@@ -9,13 +9,13 @@ import { OlympicService } from './core/services/olympic.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   constructor(private olympicService: OlympicService) {}
-  private destroy$ = new Subject<void>();
+  private _destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.olympicService.loadInitialData().pipe(takeUntil(this.destroy$)).subscribe();
+    this.olympicService.loadInitialData().pipe(takeUntil(this._destroy$)).subscribe();
   }
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete()
+    this._destroy$.next();
+    this._destroy$.complete()
   }
 }
